@@ -9,7 +9,7 @@ import cors from 'cors'
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 3000
 const databaseURL = process.env.DATABASE_URL
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -100,42 +100,6 @@ app.post('/api/create-user', async (req, res) => {
       .json({ err: 'Failed to create user profile', message: err.message })
   }
 })
-
-// // LOGIN ROUTE
-// app.post('/api/login', async (req, res) => {
-//   try {
-//     // Authenticate user via Supabase
-//     const { email, password } = req.body;
-
-//     // Call Supabase to authenticate user
-//     const { data, error } = await supabase.auth.signInWithPassword({
-//       email: email,
-//       password: password
-//     });
-//     // Check for errors
-//     if (error) {
-//       throw error;
-//     }
-//     // res.status(200).json({ message: 'Login successful', data })
-
-//     // Retrieve user profile using email
-//     const userProfile = await prisma.userProfile.findUnique({
-//       where: { email: email }
-//     });
-
-//     // If authentication successful, send success response
-//     res.status(200).json({ message: 'Login successful', user: userProfile });
-//   } catch (error) {
-//     // If any error occurred during login, send error response
-//     console.error('Error logging in:', error.message);
-//     res.status(500).json({ error: 'Failed to login', message: error.message });
-//   }
-// });
-
-// // Route handler for Next.js pages
-// app.all('*', (req, res) => {
-//   return handle(req, res)
-// })
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`)
