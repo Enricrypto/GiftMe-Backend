@@ -16,7 +16,13 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabase = createClient(URL, anonKey)
 
 // Enable CORS
-app.use(cors())
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // Change this to the actual origin of your frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Adjust allowed methods as needed
+    allowedHeaders: ['Content-Type', 'Authorization'] // Adjust allowed headers as needed
+  })
+)
 
 // Check if DATABASE_URL is defined
 if (!databaseURL) {
