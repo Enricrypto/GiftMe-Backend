@@ -9,7 +9,7 @@ import cors from 'cors'
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = 10000
 const databaseURL = process.env.DATABASE_URL
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
