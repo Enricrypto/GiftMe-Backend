@@ -40,6 +40,10 @@ const prisma = new PrismaClient({
 // Middleware to parse JSON bodies
 app.use(express.json())
 
+app.get('/', async (req, res) => {
+  res.send('Hello, World!')
+})
+
 //SIGN-UP ROUTE
 app.post('/api/signup', async (req, res) => {
   try {
