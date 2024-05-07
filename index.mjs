@@ -11,9 +11,9 @@ dotenv.config()
 const app = express()
 const port = process.env.PORT || 10000
 const databaseURL = process.env.DATABASE_URL
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const supabase = createClient(URL, anonKey)
+const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabase = createClient(supabaseURL, supabaseKey)
 
 // Enable CORS
 app.use(
@@ -47,9 +47,9 @@ app.get('/', async (req, res) => {
 
 //SIGN-UP ROUTE
 app.post('/api/signup', async (req, res) => {
-  try {
-    const { email, password } = req.body
+  const { email, password } = req.body
 
+  try {
     //signup the user in the auth.users table
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -59,17 +59,10 @@ app.post('/api/signup', async (req, res) => {
     console.log('Data:', data) // Log user object
 
     if (error) {
-      console.error('Error signing up:', error.message)
       return res
         .status(400)
         .json({ error: 'Failed to sign up', message: error.message })
     }
-
-    // Extract the user data from the response
-    // const userData = data.user
-
-    // Store the user data in localStorage - Need to setup localstorage
-    // localStorage.setItem('userData', JSON.stringify(userData))
 
     res.status(201).json({ message: 'Sign up succesful', data })
   } catch (err) {
@@ -78,41 +71,40 @@ app.post('/api/signup', async (req, res) => {
   }
 })
 
-// CREATE NEW USER ROUTE
-app.post('/api/create-user', async (req, res) => {
-  try {
-    console.log('Creating new user:', res)
-    const userData = req.body
+// // CREATE NEW USER ROUTE
+// app.post('/api/create-user', async (req, res) => {
+//   try {
+//     console.log('Creating new user:', res)
+//     const userData = req.body
 
-    // Retrieve the user data from localStorage
-    // const user = JSON.parse(localStorage.getItem('userData'))
+//     // Retrieve the user data from localStorage
+//     // const user = JSON.parse(localStorage.getItem('userData'))
 
-    // Create user profile
-    const newUserProfile = await prisma.userProfile.create({
-      data: {
-        name: userData.name,
-        surname: userData.surname,
-        avatarImage: userData.avatarImage,
-        email: userData.email,
-        password: userData.password,
-        birthDate: new Date(userData.birthDate),
-        primaryAddress: userData.primaryAddress,
-        secondaryAddress: userData.secondaryAddress
-      }
-    })
-    res.status(201).json({
-      message: 'User Profile created succesfully',
-      userProfile: newUserProfile
-    })
-  } catch (err) {
-    console.error('Error creating user', err)
-    res
-      .status(500)
-      .json({ err: 'Failed to create user profile', message: err.message })
-  }
-})
+//     // Create user profile
+//     const newUserProfile = await prisma.userProfile.create({
+//       data: {
+//         name: userData.name,
+//         surname: userData.surname,
+//         avatarImage: userData.avatarImage,
+//         email: userData.email,
+//         password: userData.password,
+//         birthDate: new Date(userData.birthDate),
+//         primaryAddress: userData.primaryAddress,
+//         secondaryAddress: userData.secondaryAddress
+//       }
+//     })
+//     res.status(201).json({
+//       message: 'User Profile created succesfully',
+//       userProfile: newUserProfile
+//     })
+//   } catch (err) {
+//     console.error('Error creating user', err)
+//     res
+//       .status(500)
+//       .json({ err: 'Failed to create user profile', message: err.message })
+//   }
+// })
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`)
 })
-// })
