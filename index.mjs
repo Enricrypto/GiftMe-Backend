@@ -45,32 +45,6 @@ app.get('/', async (req, res) => {
   res.send('Hello, World!')
 })
 
-//SIGN-UP ROUTE
-app.post('/api/signup', async (req, res) => {
-  const { email, password } = req.body
-
-  try {
-    //signup the user in the auth.users table
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    })
-
-    console.log('Data:', data) // Log user object
-
-    if (error) {
-      return res
-        .status(400)
-        .json({ error: 'Failed to sign up', message: error.message })
-    }
-
-    res.status(201).json({ message: 'Sign up succesful', data })
-  } catch (err) {
-    console.error('Error signing up:', err.message)
-    res.status(500).json({ error: 'Failed to sign up', message: err.message })
-  }
-})
-
 // // CREATE NEW USER ROUTE
 // app.post('/api/create-user', async (req, res) => {
 //   try {

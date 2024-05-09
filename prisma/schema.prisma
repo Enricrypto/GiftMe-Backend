@@ -15,12 +15,12 @@ datasource db {
 
 model UserProfile {
   id                       String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                     String
-  surname                  String
-  avatarImage              String?
+  name                     String               @db.VarChar(255)
+  surname                  String               @db.VarChar(255)
+  avatarImage              String?              @db.VarChar(255)
   supabaseUserId           String               @unique // Foreign key referencing the Supabase user ID
-  birthDate                DateTime
-  primaryAddress           String
+  birthDate                DateTime?
+  primaryAddress           String?
   secondaryAddress         String?
   createdAt                DateTime             @default(dbgenerated("now()"))
   createdGroups            Group[]              @relation("CreatedBy") // list of created groups
@@ -33,9 +33,9 @@ model UserProfile {
 
 model Group {
   id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  groupName    String
+  groupName    String        @db.VarChar(255)
   createdAt    DateTime      @default(dbgenerated("now()"))
-  isActive     Boolean
+  isActive     Boolean?
   createdBy    UserProfile   @relation("CreatedBy", fields: [createdById], references: [id])
   createdById  String        @db.Uuid // foreign key 
   groupMembers GroupMember[]
@@ -58,9 +58,9 @@ model Wishlist {
   name                String
   createdBy           UserProfile          @relation(fields: [createdById], references: [id])
   createdById         String               @db.Uuid // foreign key
-  isActive            Boolean
-  createdAt           DateTime
-  closedBy            DateTime
+  isActive            Boolean?
+  createdAt           DateTime?
+  closedBy            DateTime?
   wishlistMembers     WishlistMember[] // list of members of the wishlist
   wishlistInvitations WishlistInvitation[] //list of members invited to the wishlist
   gifts               Gift[]
