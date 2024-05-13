@@ -51,9 +51,6 @@ app.get('/', async (req, res) => {
 //     console.log('Creating new user:', res)
 //     const userData = req.body
 
-//     // Retrieve the user data from localStorage
-//     // const user = JSON.parse(localStorage.getItem('userData'))
-
 //     // Create user profile
 //     const newUserProfile = await prisma.userProfile.create({
 //       data: {
@@ -61,7 +58,6 @@ app.get('/', async (req, res) => {
 //         surname: userData.surname,
 //         avatarImage: userData.avatarImage,
 //         email: userData.email,
-//         password: userData.password,
 //         birthDate: new Date(userData.birthDate),
 //         primaryAddress: userData.primaryAddress,
 //         secondaryAddress: userData.secondaryAddress
