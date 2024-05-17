@@ -1,13 +1,7 @@
 // Contains the controller files where each file manages the logic for a specific part of your application (e.g., users, groups, tables).
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: databaseURL
-    }
-  }
-})
+const prisma = new PrismaClient()
 
 // UPDATE USER PROFILE
 export const updateUserProfile = async (req, res) => {
