@@ -1,5 +1,6 @@
 // Contains the controller files where each file manages the logic for a specific part of your application (e.g., users, groups, tables).
 import { PrismaClient } from '@prisma/client'
+import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
@@ -11,7 +12,7 @@ export const updateUserProfile = async (req, res) => {
   try {
     // Check if user profile exists
     const existingUserProfile = await prisma.userProfile.findUnique({
-      where: { id: parseInt(id) }
+      where: { id }
     })
 
     if (!existingUserProfile) {
@@ -24,7 +25,7 @@ export const updateUserProfile = async (req, res) => {
 
     // Update user profile
     const updatedUserProfile = await prisma.userProfile.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
         name: userData.name,
         surname: userData.surname,
