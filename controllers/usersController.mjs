@@ -18,6 +18,10 @@ export const updateUserProfile = async (req, res) => {
       return res.status(404).json({ message: 'User profile not found' })
     }
 
+    // Ensure that the ID and email fields are not included in the updates
+    delete userData.id
+    delete userData.email
+
     // Update user profile
     const updatedUserProfile = await prisma.userProfile.update({
       where: { id: parseInt(id) },
