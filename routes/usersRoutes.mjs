@@ -8,6 +8,6 @@ import {
 const router = express.Router()
 
 router.get('/', getAllUsers)
-router.post('/update-profile/:id', updateUserProfile)
+router.put('/update-profile/:id', updateUserProfile)
 
 export default router
