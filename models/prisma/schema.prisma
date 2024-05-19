@@ -15,10 +15,10 @@ datasource db {
 
 model UserProfile {
   id                       String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                     String               @db.VarChar(255)
-  surname                  String               @db.VarChar(255)
+  name                     String?              @db.VarChar(255)
+  surname                  String?              @db.VarChar(255)
   avatarImage              String?              @db.VarChar(255)
-  supabaseUserId           String               @unique // Foreign key referencing the Supabase user ID
+  email                    String
   birthDate                DateTime?
   primaryAddress           String?
   secondaryAddress         String?
