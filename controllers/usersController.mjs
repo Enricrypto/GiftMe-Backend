@@ -5,14 +5,14 @@ import { v4 as uuidv4 } from 'uuid'
 const prisma = new PrismaClient()
 
 // UPDATE USER PROFILE
-export const updateUserProfile = async (req, res) => {
-  const { id } = req.params
+export const createUserProfile = async (req, res) => {
+  const { userId } = req.params
   const userData = req.body
 
   try {
     // Check if user profile exists
     const existingUserProfile = await prisma.userProfile.findUnique({
-      where: { id }
+      where: { userId }
     })
 
     if (!existingUserProfile) {
@@ -20,12 +20,12 @@ export const updateUserProfile = async (req, res) => {
     }
 
     // Ensure that the ID and email fields are not included in the updates
-    delete userData.id
+    delete userData.userId
     delete userData.email
 
     // Update user profile
     const updatedUserProfile = await prisma.userProfile.update({
-      where: { id },
+      where: { userId },
       data: {
         name: userData.name,
         surname: userData.surname,
