@@ -46,13 +46,3 @@ export const createUserProfile = async (req, res) => {
       .json({ message: 'Failed to update user profile', error: err.message })
   }
 }
-
-//GET ALL USERS
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await prisma.userProfile.findMany()
-    res.status(200).json(users)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-}
