@@ -1,11 +1,10 @@
 // Contains the controller files where each file manages the logic for a specific part of your application (e.g., users, groups, tables).
 import { PrismaClient } from '@prisma/client'
-import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
 // UPDATE USER PROFILE
-export const updateUserProfile = async (req, res) => {
+export const createUserProfile = async (req, res) => {
   const { id } = req.params
   const userData = req.body
 
@@ -38,22 +37,13 @@ export const updateUserProfile = async (req, res) => {
 
     res.status(200).json({
       message: 'User profile updated successfully',
-      userProfile: updatedUserProfile
+      userProfile: updatedUserProfile,
+      userId: id // Include the user ID in the response
     })
   } catch (err) {
     console.error('Error updating user profile', err)
     res
       .status(500)
       .json({ message: 'Failed to update user profile', error: err.message })
-  }
-}
-
-//GET ALL USERS
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await prisma.userProfile.findMany()
-    res.status(200).json(users)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
   }
 }
