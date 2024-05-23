@@ -2,8 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// CREATE NEW GROUP
-export const createNewGroup = async (req, res) => {
+// CREATE GROUP
+export const createGroup = async (req, res) => {
   const { groupName, userId, groupMembers } = req.body;
 
   try {
