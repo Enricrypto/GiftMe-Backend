@@ -1,5 +1,6 @@
 /// THIS FILE IS TO INITIALIZE THE SERVER WITH EXPRESS
 import express from 'express'
+import bodyParser from 'body-parser'
 import cors from 'cors'
 import usersRoutes from './routes/usersRoutes.mjs'
 import dotenv from 'dotenv'
@@ -11,17 +12,19 @@ dotenv.config()
 const app = express()
 const port = process.env.PORT || 10000
 
+// Middleware to parse JSON bodies
+app.use(express.json())
+// Use body-parser middleware
+app.use(bodyParser.json())
+
 // Enable CORS
 app.use(
   cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 )
-
-// Middleware to parse JSON bodies
-app.use(express.json())
 
 // Routes
 app.use('/api/users', usersRoutes)
