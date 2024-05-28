@@ -82,7 +82,7 @@ export const createGroup = async (req, res) => {
         },
       },
       include: {
-        groupMembers: true, // Include groupMembers in the response
+        groupMembers: true, 
       },
     });
 
