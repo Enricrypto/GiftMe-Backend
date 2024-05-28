@@ -31,8 +31,8 @@ app.use(
 
 // Routes
 app.use('/api/users', usersRoutes)
-/* app.use('/api/groups', groupsRoutes)
- */// app.use('/api/wishlists', wishlistsRoutes)
+app.use('/api/groups', groupsRoutes)
+// app.use('/api/wishlists', wishlistsRoutes)
 
 // Database connection
 dbConfig()
