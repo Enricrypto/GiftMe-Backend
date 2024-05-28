@@ -4,10 +4,10 @@ const prisma = new PrismaClient();
 
 // CREATE GROUP
 export const createGroup = async (req, res) => {
-  const { groupName, userId, groupMembers } = req.body;
+  const { userId, newGroupName, newGroupMembers } = req.body;
 
   try {
-    // Check if user profile exists
+    // 1. Check if the user exists
     const existingUserProfile = await prisma.userProfile.findUnique({
       where: { id: userId },
     });
@@ -16,56 +16,79 @@ export const createGroup = async (req, res) => {
       return res.status(404).json({ message: "User profile not found" });
     }
 
-    // Create group data object
-    let groupData = {
-      groupName,
-      createdById: userId,
-      isActive: true,
-    };
-
-    // If groupMembers array is provided and not empty, add members
-    if (Array.isArray(groupMembers) && groupMembers.length > 0) {
-      const membersToCreate = [];
-
-      for (const member of groupMembers) {
-        const memberProfile = await prisma.userProfile.findUnique({
-          where: { id: member.currentUserId },
-        });
-
-        if (!memberProfile) {
-          return res
-            .status(404)
-            .json({ message: `User profile not found for member ID ${member.currentUserId}` });
-        }
-
-        membersToCreate.push({
-          currentUserId: member.currentUserId,
-          isInvited: member.isInvited ?? true,
-          isAccepted: member.isAccepted ?? false,
-          invitationDate: new Date(),
-          acceptanceDate: member.isAccepted ? new Date() : null,
-        });
-      }
-
-      groupData.groupMembers = {
-        create: membersToCreate,
-      };
+    // 2. Check if groupName exists and is unique
+    if (!newGroupName) {
+      return res.status(400).json({ message: "Group must have a name" });
     }
 
-    // Create new group
+    const existingGroup = await prisma.group.findUnique({
+      where: { groupName: newGroupName },
+    });
+
+    if (existingGroup) {
+      return res.status(400).json({ message: "Group name already exists" });
+    }
+
+    // 3. Validate new group members
+    let newGroupMembersData = [];
+
+    if (newGroupMembers && newGroupMembers.length > 0) {
+      for (const newGroupMember of newGroupMembers) {
+        let currentNewGroupMember = null;
+
+        if (newGroupMember?.email) {
+          currentNewGroupMember = await prisma.userProfile.findUnique({
+            where: { email: newGroupMember.email },
+          });
+        }
+
+        if (!currentNewGroupMember && newGroupMember?.name) {
+          const [name, surname] = newGroupMember.name.split(" ");
+          if (name && surname) {
+            currentNewGroupMember = await prisma.userProfile.findUnique({
+              where: {
+                name: name,
+                surname: surname,
+              },
+            });
+          }
+        }
+
+        if (currentNewGroupMember) {
+          newGroupMembersData.push({
+            currentUserId: currentNewGroupMember.id,
+            isInvited: true,
+            isAccepted: false,
+          });
+        } else {
+          return res
+            .status(404)
+            .json({
+              message: `User profile for ${
+                newGroupMember?.email || newGroupMember?.name
+              } not found`,
+            });
+        }
+      }
+    }
+
+    // 4. Create the group and add members
     const newGroup = await prisma.group.create({
-      data: groupData,
+      data: {
+        groupName: newGroupName,
+        createdById: userId,
+        groupMembers: {
+          create: newGroupMembersData,
+        },
+      },
       include: {
-        groupMembers: {},
+        groupMembers: true, // Include groupMembers in the response
       },
     });
 
-    res.status(200).json({
-      message: "Group successfully created",
-      group: newGroup,
-    });
-  } catch (err) {
-    console.error("Error creating group", err);
-    res.status(500).json({ message: "Failed to create group", error: err.message });
+    return res.status(201).json(newGroup);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
