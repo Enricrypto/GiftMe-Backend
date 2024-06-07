@@ -1,73 +1,72 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 // CREATE GROUP
 export const createGroup = async (req, res) => {
-  const { userId, newGroupName, newGroupMembers } = req.body;
+  const { userId, newGroupName, newGroupMembers } = req.body
 
   try {
     // 1. Check if the user exists
     const existingUserProfile = await prisma.userProfile.findUnique({
-      where: { id: userId },
-    });
+      where: { id: userId }
+    })
 
     if (!existingUserProfile) {
-      return res.status(404).json({ message: "User profile not found" });
+      return res.status(404).json({ message: 'User profile not found' })
     }
 
     // 2. Check if groupName exists and is unique
     if (!newGroupName) {
-      return res.status(400).json({ message: "Group must have a name" });
+      return res.status(400).json({ message: 'Group must have a name' })
     }
 
-    const existingGroup = await prisma.group.findUnique({
-      where: { groupName: newGroupName },
-    });
+    const existingGroup = await prisma.group.findFirst({
+      where: { groupName: newGroupName }
+    })
 
     if (existingGroup) {
-      return res.status(400).json({ message: "Group name already exists" });
+      return res.status(400).json({ message: 'Group name already exists' })
     }
 
     // 3. Validate new group members
-    let newGroupMembersData = [];
+    let newGroupMembersData = []
 
     if (newGroupMembers && newGroupMembers.length > 0) {
       for (const newGroupMember of newGroupMembers) {
-        let currentNewGroupMember = null;
+        let currentNewGroupMember = null
 
         if (newGroupMember?.email) {
-          currentNewGroupMember = await prisma.userProfile.findUnique({
-            where: { email: newGroupMember.email },
-          });
+          currentNewGroupMember = await prisma.userProfile.findFirst({
+            where: { email: newGroupMember.email }
+          })
         }
 
-        if (!currentNewGroupMember && newGroupMember?.name) {
-          const [name, surname] = newGroupMember.name.split(" ");
-          if (name && surname) {
-            currentNewGroupMember = await prisma.userProfile.findUnique({
-              where: {
-                name: name,
-                surname: surname,
-              },
-            });
-          }
-        }
+        // if (!currentNewGroupMember && newGroupMember?.name) {
+        //   const [name, surname] = newGroupMember.name.split(' ')
+        //   if (name && surname) {
+        //     currentNewGroupMember = await prisma.userProfile.findFirst({
+        //       where: {
+        //         name: name,
+        //         surname: surname
+        //       }
+        //     })
+        //   }
+        // }
 
         if (currentNewGroupMember) {
           newGroupMembersData.push({
             currentUserId: currentNewGroupMember.id,
             isInvited: true,
-            isAccepted: false,
-          });
+            isAccepted: false
+          })
         } else {
-          return res
-            .status(404)
-            .json({
-              message: `User profile for ${
-                newGroupMember?.email || newGroupMember?.name
-              } not found`,
-            });
+          return res.status(404).json({
+            message: `User profile for ${
+              newGroupMember?.email
+              // || newGroupMember?.name
+            } not found`
+          })
         }
       }
     }
@@ -78,17 +77,17 @@ export const createGroup = async (req, res) => {
         groupName: newGroupName,
         createdById: userId,
         groupMembers: {
-          create: newGroupMembersData,
-        },
+          create: newGroupMembersData
+        }
       },
       include: {
-        groupMembers: true, 
-      },
-    });
+        groupMembers: true
+      }
+    })
 
-    return res.status(201).json(newGroup);
+    return res.status(201).json(newGroup)
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error(error)
+    return res.status(500).json({ message: 'Internal server error' })
   }
-};
+}

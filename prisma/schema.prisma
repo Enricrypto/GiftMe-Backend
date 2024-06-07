@@ -46,7 +46,7 @@ model GroupMember {
   isInvited      Boolean
   isAccepted     Boolean     @default(false)
   invitationDate DateTime    @default(dbgenerated("now()"))
-  acceptanceDate DateTime
+  acceptanceDate DateTime?
   group          Group       @relation(fields: [groupId], references: [id])
   groupId        String      @db.Uuid // foreign key
   currentUser    UserProfile @relation("groupMember", fields: [currentUserId], references: [id])

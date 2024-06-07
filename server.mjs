@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 
 import usersRoutes from './routes/usersRoutes.mjs'
-import groupsRoutes from "./routes/groupsRoutes.mjs";
+import groupsRoutes from './routes/groupsRoutes.mjs'
 
 import dotenv from 'dotenv'
 import dbConfig from './config/dbConfig.mjs'
