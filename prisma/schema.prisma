@@ -14,31 +14,32 @@ datasource db {
 }
 
 model UserProfile {
-  id                       String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                     String?              @db.VarChar(255)
-  surname                  String?              @db.VarChar(255)
-  avatarImage              String?              @db.VarChar(255)
-  email                    String
-  birthDate                DateTime?
-  primaryAddress           String?
-  secondaryAddress         String?
-  createdAt                DateTime             @default(dbgenerated("now()"))
-  createdGroups            Group[]              @relation("CreatedBy") // list of created groups
-  groupMember              GroupMember[]        @relation("groupMember") // list of groups that user belongs to
-  wishlists                Wishlist[] // wishlists created by this user
-  wishlistMember           WishlistMember[] // wishlist this user belongs to
-  wishlistInvitations      WishlistInvitation[] @relation("InvitedByUserProfile") // list of wishlist user invited to 
-  wishlistInvitationMember WishlistInvitation[] @relation("ReceivedByUserProfile") // list of wishlists recieved by user
+  id                          String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                        String?                   @db.VarChar(255)
+  surname                     String?                   @db.VarChar(255)
+  avatarImage                 String?                   @db.VarChar(255)
+  email                       String
+  birthDate                   DateTime?
+  primaryAddress              String?
+  secondaryAddress            String?
+  createdAt                   DateTime                  @default(dbgenerated("now()"))
+  createdGroups               Group[]                   @relation("CreatedBy") // list of created groups
+  groupMember                 GroupMember[]             @relation("groupMember") // list of groups that user belongs to
+  wishlists                   Wishlist[] // wishlists created by this user
+  wishlistSendInvitations     WishlistGroupInvitation[] @relation("InvitedByUserProfile") // list of group user invited to 
+  WishlistReceivedInvitations WishlistGroupInvitation[] @relation("ReceivedByUserProfile")
 }
 
 model Group {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  groupName    String        @db.VarChar(255)
-  createdAt    DateTime      @default(dbgenerated("now()"))
-  isActive     Boolean?
-  createdBy    UserProfile   @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById  String        @db.Uuid // foreign key 
-  groupMembers GroupMember[]
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  groupName               String                    @db.VarChar(255)
+  createdAt               DateTime                  @default(dbgenerated("now()"))
+  isActive                Boolean?
+  createdBy               UserProfile               @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById             String                    @db.Uuid // foreign key 
+  groupMembers            GroupMember[]
+  Wishlist                Wishlist[]
+  WishlistGroupInvitation WishlistGroupInvitation[]
 }
 
 model GroupMember {
@@ -54,30 +55,21 @@ model GroupMember {
 }
 
 model Wishlist {
-  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                String
-  createdBy           UserProfile          @relation(fields: [createdById], references: [id])
-  createdById         String               @db.Uuid // foreign key
-  isActive            Boolean?
-  createdAt           DateTime?
-  closedBy            DateTime?
-  wishlistMembers     WishlistMember[] // list of members of the wishlist
-  wishlistInvitations WishlistInvitation[] //list of members invited to the wishlist
-  gifts               Gift[]
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+  createdById String      @db.Uuid // foreign key
+  isActive    Boolean?
+  createdAt   DateTime?
+  closedBy    DateTime?
+  // FK (one-to-many) GROUP TO WISHLIST 
+  Group       Group       @relation(fields: [GroupId], references: [id])
+  GroupId     String      @db.Uuid
+  gifts       Gift[]
 }
 
-model WishlistMember {
-  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  wishlist      Wishlist    @relation(fields: [wishlistId], references: [id])
-  wishlistId    String      @db.Uuid
-  userProfile   UserProfile @relation(fields: [userProfileId], references: [id])
-  userProfileId String      @db.Uuid
-}
-
-model WishlistInvitation {
+model WishlistGroupInvitation {
   id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  wishlist       Wishlist    @relation(fields: [wishlistId], references: [id])
-  wishlistId     String      @db.Uuid // foreign key
   isInvited      Boolean
   isAccepted     Boolean     @default(false)
   invitationDate DateTime
@@ -86,6 +78,8 @@ model WishlistInvitation {
   invitedById    String      @db.Uuid // who issued the invitation
   receivedBy     UserProfile @relation("ReceivedByUserProfile", fields: [receivedById], references: [id])
   receivedById   String      @db.Uuid // who received the invitation 
+  Group          Group?      @relation(fields: [groupId], references: [id])
+  groupId        String?     @db.Uuid
 }
 
 model Gift {
