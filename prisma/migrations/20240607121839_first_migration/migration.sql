@@ -7,12 +7,12 @@ CREATE TYPE "NotificationStatus" AS ENUM ('PENDING', 'READ', 'UNREAD', 'ARCHIVED
 -- CreateTable
 CREATE TABLE "UserProfile" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "name" TEXT NOT NULL,
-    "surname" TEXT NOT NULL,
-    "avatarImage" TEXT,
-    "supabaseUserId" TEXT NOT NULL,
-    "birthDate" TIMESTAMP(3) NOT NULL,
-    "primaryAddress" TEXT NOT NULL,
+    "name" VARCHAR(255),
+    "surname" VARCHAR(255),
+    "avatarImage" VARCHAR(255),
+    "email" TEXT NOT NULL,
+    "birthDate" TIMESTAMP(3),
+    "primaryAddress" TEXT,
     "secondaryAddress" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT now(),
 
@@ -22,9 +22,9 @@ CREATE TABLE "UserProfile" (
 -- CreateTable
 CREATE TABLE "Group" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "groupName" TEXT NOT NULL,
+    "groupName" VARCHAR(255) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT now(),
-    "isActive" BOOLEAN NOT NULL,
+    "isActive" BOOLEAN,
     "createdById" UUID NOT NULL,
 
     CONSTRAINT "Group_pkey" PRIMARY KEY ("id")
@@ -48,9 +48,9 @@ CREATE TABLE "Wishlist" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
     "createdById" UUID NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
-    "closedBy" TIMESTAMP(3) NOT NULL,
+    "isActive" BOOLEAN,
+    "createdAt" TIMESTAMP(3),
+    "closedBy" TIMESTAMP(3),
 
     CONSTRAINT "Wishlist_pkey" PRIMARY KEY ("id")
 );
@@ -115,9 +115,6 @@ CREATE TABLE "Notification" (
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "UserProfile_supabaseUserId_key" ON "UserProfile"("supabaseUserId");
 
 -- AddForeignKey
 ALTER TABLE "Group" ADD CONSTRAINT "Group_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "UserProfile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
