@@ -4,11 +4,12 @@ const prisma = new PrismaClient();
 
 // CREATE GROUP
 export const createGroup = async (req, res) => {
+  console.log("createGroup function entered")
   const { userId, newGroupName, newGroupMembers } = req.body;
 
   try {
     // 1. Check if the user exists
-    const existingUserProfile = await prisma.userProfile.findUnique({
+    const existingUserProfile = await prisma.userProfile.findFirst({
       where: { id: userId },
     });
 
@@ -42,7 +43,7 @@ export const createGroup = async (req, res) => {
           });
         }
 
-        if (!currentNewGroupMember && newGroupMember?.name) {
+  /*       if (!currentNewGroupMember && newGroupMember?.name) {
           const [name, surname] = newGroupMember.name.split(" ");
           if (name && surname) {
             currentNewGroupMember = await prisma.userProfile.findFirst({
@@ -52,7 +53,7 @@ export const createGroup = async (req, res) => {
               },
             });
           }
-        }
+        } */
 
         if (currentNewGroupMember) {
           newGroupMembersData.push({
@@ -62,7 +63,7 @@ export const createGroup = async (req, res) => {
           });
         } else {
           return res.status(404).json({
-            message: `User profile for ${newGroupMember?.email || newGroupMember?.name} not found`,
+            message: `User profile for ${newGroupMember?.email /* || newGroupMember?.name */} not found`,
           });
         }
       }
@@ -85,6 +86,6 @@ export const createGroup = async (req, res) => {
     return res.status(201).json(newGroup);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error - function running" });
   }
 };
