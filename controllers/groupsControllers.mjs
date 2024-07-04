@@ -16,7 +16,7 @@ export const createGroup = async (req, res) => {
       return res.status(404).json({ message: 'User profile not found' })
     }
 
-    // 2. Check if groupName exists and is unique
+    // 2. Check if groupName exists
     if (!newGroupName) {
       return res.status(400).json({ message: 'Group must have a name' })
     }
@@ -42,18 +42,6 @@ export const createGroup = async (req, res) => {
           })
         }
 
-        // if (!currentNewGroupMember && newGroupMember?.name) {
-        //   const [name, surname] = newGroupMember.name.split(' ')
-        //   if (name && surname) {
-        //     currentNewGroupMember = await prisma.userProfile.findFirst({
-        //       where: {
-        //         name: name,
-        //         surname: surname
-        //       }
-        //     })
-        //   }
-        // }
-
         if (currentNewGroupMember) {
           newGroupMembersData.push({
             currentUserId: currentNewGroupMember.id,
@@ -62,10 +50,7 @@ export const createGroup = async (req, res) => {
           })
         } else {
           return res.status(404).json({
-            message: `User profile for ${
-              newGroupMember?.email
-              // || newGroupMember?.name
-            } not found`
+            message: `User profile for ${newGroupMember?.email} not found`
           })
         }
       }
