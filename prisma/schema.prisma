@@ -42,7 +42,7 @@ model Group {
   WishlistGroupInvitation WishlistGroupInvitation[]
 }
 
-model GroupMember {
+model GroupMember {0
   id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   isInvited      Boolean
   isAccepted     Boolean     @default(false)
