@@ -5,7 +5,7 @@ import { createUserProfile } from '../controllers/usersController.mjs'
 
 const router = express.Router()
 
-// here you have all the routes
+// All the routes of the application
 router.patch('/create-profile/:id', createUserProfile)
 
 export default router
