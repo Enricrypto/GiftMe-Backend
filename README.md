@@ -114,3 +114,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 Thank you for using Gift Me! If you have any questions or need further assistance, feel free to open an issue or contact the project maintainers.
+
+![image](https://github.com/Enricrypto/GiftMe-Backend/assets/105727501/4f5a5cb6-1dff-4700-89b8-8402aafe7666)
+
+
